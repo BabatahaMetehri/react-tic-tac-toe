@@ -1,18 +1,24 @@
 import { useState } from "react";
 
-export default function Player({ name, symbol }) {
+export default function Player({ name, symbol, isActive, onRename }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(name);
 
-  const handleClickBtn = function () {
+  const handleClickBtn = function (symbol, newName) {
     setIsEditing((ie) => !ie);
+    if (isEditing)
+      onRename(
+        symbol,
+        newName[0].toUpperCase() +
+          newName.slice(1, newName.length).toLowerCase()
+      );
   };
 
   const handleChange = function (e) {
-    setNewName((_) => e.target.value);
+    setNewName(e.target.value);
   };
   return (
-    <li>
+    <li className={isActive ? "active" : ""}>
       <span className="player">
         {!isEditing ? (
           <span className="player-name">{newName}</span>
@@ -20,7 +26,9 @@ export default function Player({ name, symbol }) {
           <input type="text" required value={newName} onChange={handleChange} />
         )}
         <span className="player-symbol">{symbol}</span>
-        <button onClick={handleClickBtn}>{isEditing ? "Save" : "Edit"}</button>
+        <button onClick={() => handleClickBtn(symbol, newName)}>
+          {isEditing ? "Save" : "Edit"}
+        </button>
       </span>
     </li>
   );
